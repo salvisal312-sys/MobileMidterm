@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // Welcome message
           Text(
-            "Welcome Back!",
+            "Welcome MyAPP",
             style: GoogleFonts.poppins(
               fontSize: 26,
               fontWeight: FontWeight.bold,
@@ -50,9 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _featureCard(Icons.shopping_cart, "Orders", Colors.orange),
-              _featureCard(Icons.inventory, "Products", Colors.green),
-              _featureCard(Icons.bar_chart, "Reports", Colors.blue),
+              _featureCard(Icons.local_shipping, "Orders", Colors.purple),
+              _featureCard(Icons.storefront, "Products", Colors.teal),
+              _featureCard(Icons.show_chart, "Reports", Colors.deepOrange),
             ],
           ),
           const SizedBox(height: 40),

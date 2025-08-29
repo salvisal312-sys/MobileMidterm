@@ -13,16 +13,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: const EdgeInsets.all(24.0),
-        children: [
-          const SizedBox(height: 40),
+      backgroundColor: Colors.grey[100], // Changed background color
 
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+        children: [
           // Profile Picture
           Center(
             child: CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage("asset/images/profile.jpg"),
+              radius: 55,
+              backgroundColor: Colors.blueGrey[100],
+              child: Icon(
+                Icons.person, // or any other icon you want
+                size: 50,
+                color: Colors.grey[700],
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -30,10 +35,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // User Name
           Center(
             child: Text(
-              "Sol Visal",
+              "Kavfey",
               style: GoogleFonts.poppins(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
               ),
             ),
           ),
@@ -41,46 +47,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // User Email
           Center(
             child: Text(
-              "Solvisal@email.com",
-              style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600]),
+              "kavfey@email.com",
+              style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[700]),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 30),
 
           // Edit Profile Button
           ElevatedButton.icon(
             onPressed: () {
               // TODO: Navigate to edit profile screen
             },
-            icon: const Icon(Icons.edit),
+            icon: const Icon(Icons.edit_note),
             label: Text(
-              "Edit Profile",
-              style: GoogleFonts.poppins(fontSize: 16),
+              "Update Info",
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
-              backgroundColor: const Color.fromARGB(255, 3, 12, 32),
+              backgroundColor: const Color(0xFF1E1E2C),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 25),
 
           // Options
           ListTile(
-            leading: const Icon(Icons.lock),
-            title: Text("Change Password", style: GoogleFonts.poppins()),
+            leading: const Icon(Icons.security, color: Colors.blue),
+            title: Text("Update Password", style: GoogleFonts.poppins()),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
-              // TODO: Navigate to change password
+              // TODO: Navigate to update password
             },
           ),
           ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
+            leading: const Icon(Icons.exit_to_app, color: Colors.redAccent),
             title: Text(
-              "Logout",
-              style: GoogleFonts.poppins(color: Colors.red),
+              "Sign Out",
+              style: GoogleFonts.poppins(color: Colors.redAccent),
             ),
             onTap: () {
               Navigator.pushReplacement(

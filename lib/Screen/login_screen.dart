@@ -1,10 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:pos/Screen/main_screen.dart';
 import 'package:pos/Screen/register_screen.dart';
-import 'UserRepository.dart'; // <-- Your simple auth class
+import 'UserRepository.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,36 +17,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  String? _loginError; // Inline login error message
 
   void _togglePasswordVisibility() {
     setState(() {
       _obscurePassword = !_obscurePassword;
     });
-  }
-
-  void _showDialog(String title, String message, {bool success = false}) {
-    showDialog(
-      context: context,
-      barrierDismissible: !success,
-      builder: (_) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              if (success) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const MainScreen()),
-                );
-              }
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
   }
 
   void _login() {
@@ -58,9 +33,15 @@ class _LoginScreenState extends State<LoginScreen> {
       bool success = UserRepository.login(email, password);
 
       if (success) {
-        _showDialog("Success 🎉", "Login successful!", success: true);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainScreen()),
+        );
       } else {
-        _showDialog("Failed ❌", "Invalid email or password.");
+        // Show inline error
+        setState(() {
+          _loginError = "Invalid email or password";
+        });
       }
     }
   }
@@ -75,124 +56,152 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: const EdgeInsets.all(24.0),
-        children: [
-          const SizedBox(height: 80),
-          Text(
-            "Sign In",
-            style: GoogleFonts.poppins(
-              color: const Color.fromARGB(255, 89, 0, 255),
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          const SizedBox(height: 16),
-          Center(
-            child: Text(
-              'Login with your email and password.',
-              style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[600]),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(height: 32),
-          Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: "Email",
-                    hintText: "Enter your email",
-                    prefixIcon: Icon(Icons.email, color: Colors.grey[600]),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "Email is required";
-                    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                    if (!emailRegex.hasMatch(value))
-                      return "Enter a valid email";
-                    return null;
-                  },
+        ),
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 80),
+          children: [
+            Center(
+              child: Text(
+                "Welcome MyAPP",
+                style: GoogleFonts.poppins(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: "Password",
-                    hintText: "Enter your password",
-                    prefixIcon: Icon(Icons.lock, color: Colors.grey[600]),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: Text(
+                "Sign in to continue",
+                style: GoogleFonts.poppins(fontSize: 14, color: Colors.white70),
+              ),
+            ),
+            const SizedBox(height: 40),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      labelText: "Email",
+                      hintText: "Enter your email",
+                      prefixIcon: const Icon(
+                        Icons.email,
+                        color: Colors.black54,
                       ),
-                      onPressed: _togglePasswordVisibility,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return "Email is required";
+                      final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                      if (!emailRegex.hasMatch(value))
+                        return "Enter a valid email";
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "Password is required";
-                    if (value.length < 6)
-                      return "Password must be at least 6 characters";
-                    return null;
-                  },
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      labelText: "Password",
+                      hintText: "Enter your password",
+                      prefixIcon: const Icon(Icons.lock, color: Colors.black54),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Colors.black54,
+                        ),
+                        onPressed: _togglePasswordVisibility,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return "Password is required";
+                      if (value.length < 6)
+                        return "Password must be at least 6 characters";
+                      return null;
+                    },
+                  ),
+                  if (_loginError != null) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      _loginError!,
+                      style: const TextStyle(color: Colors.red, fontSize: 14),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF2575FC),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 6, 55, 161),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                minimumSize: const Size(double.infinity, 50),
               ),
-              minimumSize: const Size(double.infinity, 50),
-            ),
-            onPressed: _login,
-            child: Text(
-              "LOG IN",
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
+              onPressed: () {
+                // Clear previous login error before validating
+                setState(() {
+                  _loginError = null;
+                });
+                _login();
+              },
+              child: Text(
+                "SIGN IN",
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              RichText(
+            const SizedBox(height: 24),
+            Center(
+              child: RichText(
                 text: TextSpan(
                   children: [
                     TextSpan(
                       text: "Don't have an account? ",
                       style: GoogleFonts.poppins(
                         fontSize: 14,
-                        color: Colors.grey[700],
+                        color: Colors.white70,
                       ),
                     ),
                     TextSpan(
-                      text: 'Sign Up',
+                      text: 'Register',
                       style: GoogleFonts.poppins(
                         fontSize: 14,
-                        color: const Color.fromARGB(255, 51, 0, 255),
-                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
@@ -207,9 +216,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
